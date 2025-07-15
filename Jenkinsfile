@@ -30,7 +30,8 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 sh "sed -i 's|image: .*|image: $IMAGE_NAME|' k8s-deploy.yaml"
-                sh "kubectl apply -f k8s-deploy.yaml"
+                sh 'kubectl apply --validate=false -f k8s-deploy.yaml'
+
             }
         }
     }

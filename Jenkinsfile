@@ -15,7 +15,10 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/HARSHITHA-G-M/django-app-deploy.git', branch: 'master'
+                checkout([$class: 'GitSCM',
+                    branches: [[name: '*/master']],
+                    userRemoteConfigs: [[url: 'https://github.com/HARSHITHA-G-M/django-app-deploy.git']]
+                ])
             }
         }
 

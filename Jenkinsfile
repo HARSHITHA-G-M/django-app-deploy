@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         IMAGE_NAME = "bharadh548/django-blog:latest"
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub')   // Docker Hub creds ID in Jenkins
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub')  // Docker Hub credentials ID in Jenkins
     }
 
     stages {
@@ -42,14 +42,13 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                // Use your kubeconfig secret file stored in Jenkins as 'kubeconfig'
                 withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
                     sh '''
-                        # Update the image in the k8s yaml without --record (deprecated)
-                        kubectl set image -f k8s-deploy.yaml django-container=${IMAGE_NAME} --kubeconfig=$KUBECONFIG
-                        
-                        # Apply the updated deployment
+                        # Apply the Kubernetes manifest (create/update resources)
                         kubectl apply -f k8s-deploy.yaml --kubeconfig=$KUBECONFIG
+
+                        # Set the updated Docker image in the deployment
+                        kubectl set image deployment/django-blog django-container=bharadh548/django-blog:latest --kubeconfig=$KUBECONFIG
                     '''
                 }
             }

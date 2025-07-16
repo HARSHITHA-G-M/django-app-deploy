@@ -44,11 +44,11 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
                     sh '''
-                        # Apply the Kubernetes manifest (create/update resources)
+                        # Apply the Kubernetes deployment and service
                         kubectl apply -f k8s-deploy.yaml --kubeconfig=$KUBECONFIG
 
-                        # Set the updated Docker image in the deployment
-                        kubectl set image deployment/django-blog django-container=bharadh548/django-blog:latest --kubeconfig=$KUBECONFIG
+                        # Update the image (use correct container name: django)
+                        kubectl set image deployment/django-blog django=bharadh548/django-blog:latest --kubeconfig=$KUBECONFIG
                     '''
                 }
             }
